@@ -1,7 +1,5 @@
-// Daniel Shiffman
-// http://codingtra.in
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/cXgA1d_E-jY
+// Original game created by Daniel Shiffman http://codingtra.in
+// AI created by Brayden Cloud
 
 // P5 exported functions (eslint flags)
 /* exported preload, setup, draw, keyPressed */
@@ -154,6 +152,7 @@ function reset() {
   pipes.push(new Pipe());
 
   fileBird = new Bird();
+  // bestAI comes from a file bestBird.js which is an object containing the configuration for the highest trained bird with this algorithm.
   fileBird.ai = new NeuralNetwork(bestAI);
 
   gameoverFrame = frameCount - 1;

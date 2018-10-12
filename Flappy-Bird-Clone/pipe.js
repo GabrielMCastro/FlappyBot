@@ -1,7 +1,5 @@
-// Daniel Shiffman
-// http://codingtra.in
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/cXgA1d_E-jY
+// Original game created by Daniel Shiffman http://codingtra.in
+// AI created by Brayden Cloud
 
 // Pipe is exported (eslint flags)
 /* exported Pipe */
