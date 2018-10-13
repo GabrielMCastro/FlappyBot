@@ -16,4 +16,5 @@ This Flappy Bird clone is played by an ANN which uses a genetic algorithm to tra
 4. From the `Flappy-Bird-Clone` directory, run `http-server`
 5. From the `nn` directory, run `http-server`
 6. Navigate to whatever address the `Flappy-Bird-Clone` http server is serving on.
+
 __Note:__ You can change the port that the Flappy Bird game looks for the neural network code on in `Flappy-Bird-Clone/index.html`
