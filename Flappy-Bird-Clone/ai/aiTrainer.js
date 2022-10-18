@@ -226,9 +226,6 @@ const AITrainer = function (config)
         population = newPopulation
     }
 
-    // Speciates the population and returns each network in an array with other species members
-
-
     // Increment the innovation number and hidden nodes by requested amount and return new innovation number
     function addInnovations(i, h) {
         innovations += i
