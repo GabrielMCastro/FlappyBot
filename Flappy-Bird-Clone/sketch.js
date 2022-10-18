@@ -1,13 +1,13 @@
 // Original game created by Daniel Shiffman http://codingtra.in
-// AI created by Brayden Cloud
 
 // P5 exported functions (eslint flags)
 /* exported preload, setup, draw, keyPressed */
 
 // Exported sprites (eslint flags)
 /* exported birdSprite, pipeBodySprite, pipePeakSprite */
+// import { AITrainer } from "./ai/aiTrainer.js";
+
 var shouldPrint = true;
-var birdCount = 500;
 var birds = [];
 var savedBirds = [];
 var bestBird = undefined;
@@ -29,6 +29,18 @@ var isOver = false;
 var touched = false;
 var prevTouched = touched;
 
+var config = {
+  SimNum: 50,
+  PopulationSize: 50,
+  MaxGens: 5,
+  Inputs: 4,
+  Outputs: 2,
+  ReproductionPercentile: .75,
+  StructureMutationR: .15,
+  // StructureMutationSplit: 
+  Bias: 1
+}
+var AI = new AITrainer(config)
 
 function preload() {
   pipeBodySprite = loadImage('graphics/pipe_body.png');
@@ -42,15 +54,15 @@ function setup() {
 
   birds = [];
   savedBirds = [];
-  for (let i = 0; i < birdCount; i++) {
-    birds.push(new Bird());
+  for (let i = 0; i < config.PopulationSize; i++) {
+    birds.push(new Bird(AI, i));
   }
 
   reset();
 }
 
 function draw() {
-  if (birds.length <= 0 && fileBird === undefined) return;
+  if (birds.length <= 0) return;
   background(0);
   // Draw our background image, then move it at the same speed as the pipes
   image(bgImg, bgX, 0, bgImg.width, height);
@@ -69,23 +81,10 @@ function draw() {
   }
 
   let shouldUpScore = false;
-  // update the file bird
-  if (fileBird) {
-    fileBird.update(pipes);
-    fileBird.show();
-  }
 
   for (var i = pipes.length - 1; i >= 0; i--) {
     pipes[i].update();
     pipes[i].show();
-
-    if (fileBird && pipes[i].pass(fileBird)) {
-      fileBird.score += 1;
-      shouldUpScore = true;
-    }
-    if (fileBird && pipes[i].hits(fileBird)) {
-      fileBird = undefined;
-    }
 
     if (pipes[i].offscreen()) {
       pipes.splice(i, 1);
@@ -100,10 +99,10 @@ function draw() {
     for (let j = 0; j < pipes.length; j++) {
       if (pipes[j].pass(birds[i])) {
         shouldUpScore = true;
-        birds[i].score += 1;
+        birds[i].addScore(1);
       }
 
-      if (pipes[j].hits(birds[i])) {
+      if (pipes[j].hits(birds[i]) || (birds[i].y / 600) > .97) { // Hits pipe or ground
         savedBirds.push(birds.splice(i, 1)[0]);
         break;
       }
@@ -114,14 +113,14 @@ function draw() {
     score += 1;
   }
 
-  if ((frameCount - gameoverFrame) % 150 == 0) {
+  if ((frameCount - gameoverFrame) % 130 == 0) {
     pipes.push(new Pipe());
   }
 
   showScores();
 
   // rebread the population
-  if (birds.length <= 0 && fileBird === undefined) {
+  if (birds.length <= 0) {
     noLoop();
     evolve();
   }
@@ -151,33 +150,16 @@ function reset() {
   pipes = [];
   pipes.push(new Pipe());
 
-  fileBird = new Bird();
-  // bestAI comes from a file bestBird.js which is an object containing the configuration for the highest trained bird with this algorithm.
-  fileBird.ai = new NeuralNetwork(bestAI);
-
   gameoverFrame = frameCount - 1;
   loop();
 }
 
 function evolve() {
-  // get the cumulative score of the birds
-  let totalScore = savedBirds.reduce((total, bird) => total + bird.score, 0);
-  savedBirds.map(bird => {
-    const fitness = bird.fitness = bird.score / totalScore;
-    if (bird.score > highestFitness) {
-      highestFitness = bird.score;
-      bestBird = bird;
-    }
-    return fitness;
-  });
-  // pick a bird randomly for each member of the population
-  for (let i = 0; i < birdCount; i++) {
-    let randomBird = pickElement(savedBirds);
-    randomBird = Object.assign( Object.create( Object.getPrototypeOf(randomBird)), randomBird);
-    randomBird.ai.mutate(0.2);
-    birds.push(randomBird);
+  console.log("evolving")
+  AI.advanceGeneration()
+  for (let i = 0; i < AI.getPopulationSize(); i++) {
+    birds.push(new Bird(AI, i));
   }
-  savedBirds = [];
   reset();
 }
 

@@ -4,7 +4,7 @@
 /* exported Bird */
 
 class Bird {
-  constructor() {
+  constructor(AI, id) {
     this.y = height / 2;
     this.x = 64;
 
@@ -20,7 +20,8 @@ class Bird {
     // inputs: distance from next pipe, current y position, y position of each pipe, current direction (5 total)
     // hidden: two layers of 10 (chosen randomly)
     // output: probability of jumping and probability of not jumping
-    this.ai = new NeuralNetwork([4, 10, 2]);
+    this.ai = AI;
+    this.id = id;
     // how fit this bird is
     this.score = 1;
     this.fitness = 0;
@@ -32,7 +33,13 @@ class Bird {
   }
 
   up() {
+    // console.log(`${this.id} - up`)
     this.velocity = this.lift;
+  }
+
+  addScore(d) {
+    this.score += d
+    this.ai.setScore(this.score, this.id)
   }
 
   update(pipes) {
@@ -64,8 +71,9 @@ class Bird {
     let bottomPipeY = closestPipe.bottom / 600;
     let yPos = this.y / 600;
     let vel = this.velocity / 600;
-    let decision = this.ai.feedforward([pipeDistance, yPos, topPipeY, bottomPipeY]);
-    if (decision[0] > decision[1]) {
+    let decision = this.ai.execute([pipeDistance, yPos, topPipeY, bottomPipeY], this.id);
+    // console.log(decision, this.id)
+    if (!decision) {
       this.up();
     }
   }
