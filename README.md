@@ -4,9 +4,9 @@ The original game is created by Daniel Shiffman. http://codingtra.in
 
 This version is modified to be played by an Artificial Neural Network.
 
-Demo videos can be found 
-![Demo](https://youtu.be/HmYgqDhs4VE)
-![Demo](https://youtu.be/nA21sG5GNj4)
+Demo videos can be found:
+[![Demo](https://github.com/GabrielMCastro/FlappyBot/blob/master/Flappy-Bird-Clone/graphics/demos/sc_demo1.png)](https://youtu.be/HmYgqDhs4VE)
+[![Demo](https://github.com/GabrielMCastro/FlappyBot/blob/master/Flappy-Bird-Clone/graphics/demos/sc_demo2.png)](https://youtu.be/nA21sG5GNj4)
 
 ## How it works
 This Flappy Bird clone is played by an ANN generated using the NEAT method. The algorithm trains by selecting the highest performing network out of a population and making those traits more likely to occur in future "generations," slowly increasing the average fitness of the AI over time.
